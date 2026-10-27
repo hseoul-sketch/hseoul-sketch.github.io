@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.teslanavi.mobile",
+      "sha256_cert_fingerprints": [
+        "45:95:FC:38:B2:FB:54:76:05:E6:F9:15:FC:FF:98:53:58:8F:F9:17:74:E0:17:BC:19:D1:9E:E7:54:73:2D:E2"
+      ]
+    }
+  }
+]

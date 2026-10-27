@@ -1,14 +1,22 @@
-
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TeslaNavi 인증</title>
-</head>
-<body>
-  <h1>Tesla 인증 리디렉션</h1>
-  <p>인증 페이지로 돌아왔습니다.</p>
-  <p>실제 로그인 처리는 아직 구현되지 않았습니다.</p>
-</body>
-</html>
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; connect-src 'none'; img-src 'none'"><title>TeslaNavi 로그인 복귀</title><style>body{font:16px system-ui;max-width:480px;padding:32px 24px;margin:auto;color:#193b30}a{display:block;padding:16px;border-radius:12px;background:#0d684a;color:white;text-align:center;text-decoration:none}p{line-height:1.8}</style></head>
+<body><h1>TeslaNavi로 돌아가기</h1><p id="status">승인 결과를 확인하고 있습니다.</p><a id="return" hidden>안드로이드 앱으로 돌아가기</a><p>앱에서 시작한 로그인만 처리할 수 있습니다. 이 페이지는 토큰을 발급하거나 로그인 정보를 저장하지 않습니다. 주소나 승인 코드를 복사해 다른 사람에게 보내지 마세요.</p>
+<script>
+'use strict';
+// The provider initially sends a query string here. Remove it before any onward navigation.
+const params=new URLSearchParams(location.search);
+history.replaceState(null,'',location.pathname);
+const status=document.getElementById('status'),link=document.getElementById('return');
+const fields=['state','code','error'];
+const duplicate=fields.some(k=>params.getAll(k).length>1);
+const state=params.get('state'),code=params.get('code'),error=params.get('error');
+if(duplicate||!state||state.length>128||(!code&&!error)||(code&&error)||(code&&code.length>4096)) {
+ status.textContent='유효한 승인 결과가 없습니다. 설치한 앱에서 로그인을 다시 시작하세요.';
+}else{
+ const query=new URLSearchParams({state});
+ if(code)query.set('code',code);else query.set('error','access_denied');
+ // Explicit package prevents Android browser relay from targeting an arbitrary app.
+ link.href='intent://oauth/callback?'+query.toString()+'#Intent;scheme=teslanavi;package=app.teslanavi.mobile;end';
+ link.hidden=false;status.textContent=error?'로그인을 취소했습니다. 앱으로 돌아가세요.':'아래 버튼으로 앱에 돌아가 승인 결과를 처리하세요.';
+}
+</script></body></html>
